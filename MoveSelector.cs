@@ -51,10 +51,49 @@ namespace RockPaperScissors
                 Console.WriteLine("Invalid choice! Please select a valid set number.");
             }
         }
-public static string[] CreateCustomMoveSet()
+public static string[] CreateCustomMoveSet(string[] args = null)
 {
     string[] allMoves = { "Rock", "Paper", "Scissors", "Lizard", "Spock", "Water", "Fire", "Thunder", "Ice", "Poison", "Shadow", "Light", "Grass", "Metal", "Electric" };
     List<string> selectedMoves = new List<string>();
+
+    // If args are provided, process them
+    if (args != null && args.Length > 0)
+    {
+        foreach (var arg in args)
+        {
+            if (int.TryParse(arg, out int index) && index >= 1 && index <= allMoves.Length)
+            {
+                string selectedMove = allMoves[index - 1];
+                if (!selectedMoves.Contains(selectedMove))
+                {
+                    selectedMoves.Add(selectedMove);
+                }
+            }
+            else if (allMoves.Contains(arg, StringComparer.OrdinalIgnoreCase))
+            {
+                string selectedMove = allMoves.First(m => m.Equals(arg, StringComparison.OrdinalIgnoreCase));
+                if (!selectedMoves.Contains(selectedMove))
+                {
+                    selectedMoves.Add(selectedMove);
+                }
+            }
+            else
+            {
+                Console.WriteLine($"Invalid move from argument: {arg}");
+            }
+        }
+
+        // Ensure the user selected an odd number of moves (at least 3)
+        if (selectedMoves.Count >= 3 && selectedMoves.Count % 2 == 1)
+        {
+            return selectedMoves.ToArray(); // Return the selected moves
+        }
+        else
+        {
+            Console.WriteLine("You must select an odd number of moves (at least 3) from command-line arguments.");
+            return null; // Indicate failure
+        }
+    }
 
     Console.WriteLine("Select an odd number of moves from the following options (at least 3):");
 
@@ -72,8 +111,12 @@ public static string[] CreateCustomMoveSet()
 
     while (true)
     {
-        Console.Write("Enter the numbers or names of your selected moves (comma or space-separated): ");
+        Console.Write("Enter the numbers or names of your at least 3 selected moves (comma or space-separated): ");
+
+       // #formHere the comandline arg move will work
+
         string input = Console.ReadLine().ToLower();
+        
 
         // Split input by comma or space
         string[] moveEntries = input.Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
@@ -88,7 +131,7 @@ public static string[] CreateCustomMoveSet()
         // Handle help condition
         else if (moveEntries.Length == 1 && moveEntries[0] == "?")
         {
-            HelpDisplay.DisplayHelp(allMoves); // Display help for all moves
+            HelpDisplay.DisplayHelp(null); // Display help for all moves
             continue; // Return to the move selection
         }
 

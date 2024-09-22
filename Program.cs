@@ -8,8 +8,25 @@ namespace RockPaperScissors
 
         static void Main(string[] args)
         {
-            StartGame(); // Call the central control function to start the game
+            if (args.Length > 0)
+            {
+                // If command-line arguments are provided, run the game directly with a predefined set
+                string[] predefinedSet = MoveSelector.CreateCustomMoveSet(args);
+                if (predefinedSet != null)
+                {
+                    PlayGame(predefinedSet);
+                }
+                else
+                {
+                    Console.WriteLine("Invalid command-line arguments. Please use 'rock paper scissors' or similar moves.");
+                }
+            }
+            else
+            {
+                StartGame(); // No command-line arguments, go to the menu
+            }
         }
+
 
         // Central function that handles the main game flow
         public static void StartGame()
@@ -61,6 +78,19 @@ namespace RockPaperScissors
             while (true)
             {
                 Console.Clear();
+
+                // Generate computer move and HMAC
+                Random random = new Random();
+                int computerMoveIndex = random.Next(moves.Length);
+                string computerMove = moves[computerMoveIndex];
+
+                // Generate random key and HMAC
+                byte[] secretKey = HmacGenerator.GenerateRandomKey();
+                string hmac = HmacGenerator.GenerateHmac(secretKey, computerMove);
+
+                // Display the HMAC to the user
+                Console.WriteLine($"HMAC: {hmac}");
+                
                 Console.WriteLine("Choose your move by typing a number or move name:");
                 for (int i = 0; i < moves.Length; i++)
                 {
@@ -82,24 +112,23 @@ namespace RockPaperScissors
                     continue; // Continue the game loop
                 }
 
-                int playerMove = MoveSelector.GetMoveIndex(userInput, moves);
-                if (playerMove == -1)
+                int playerMoveIndex = MoveSelector.GetMoveIndex(userInput, moves);
+                if (playerMoveIndex == -1)
                 {
                     Console.WriteLine("Invalid choice, try again.");
                     continue;
                 }
 
-                Random random = new Random();
-                int computerMove = random.Next(moves.Length);
+                string playerMove = moves[playerMoveIndex];
 
-                Console.WriteLine($"\nYou chose: {moves[playerMove]}");
-                Console.WriteLine($"The computer chose: {moves[computerMove]}\n");
+                Console.WriteLine($"\nYou chose: {playerMove}");
+                Console.WriteLine($"The computer chose: {computerMove}\n");
 
                 if (playerMove == computerMove)
                 {
                     Console.WriteLine("It's a tie!");
                 }
-                else if (GameLogic.IsPlayerWinner(moves[playerMove], moves[computerMove]))
+                else if (GameLogic.IsPlayerWinner(playerMove, computerMove))
                 {
                     Console.WriteLine("You win!");
                 }
@@ -107,6 +136,9 @@ namespace RockPaperScissors
                 {
                     Console.WriteLine("You lose!");
                 }
+
+                // Show the HMAC key after the result
+                Console.WriteLine($"\nHMAC key: {BitConverter.ToString(secretKey).Replace("-", "")}");
 
                 Console.WriteLine("\nPress Enter to return to the main menu...");
                 Console.ReadLine();
