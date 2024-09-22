@@ -4,13 +4,13 @@ namespace RockPaperScissors
 {
     class Program
     {
-        static bool continuePlaying = true; // This flag controls whether to keep looping through the game
+        static bool continuePlaying = true;
 
         static void Main(string[] args)
         {
             if (args.Length > 0)
             {
-                // If command-line arguments are provided, run the game directly with a predefined set
+
                 string[] predefinedSet = MoveSelector.CreateCustomMoveSet(args);
                 if (predefinedSet != null)
                 {
@@ -23,12 +23,10 @@ namespace RockPaperScissors
             }
             else
             {
-                StartGame(); // No command-line arguments, go to the menu
+                StartGame();
             }
         }
 
-
-        // Central function that handles the main game flow
         public static void StartGame()
         {
             while (continuePlaying)
@@ -48,7 +46,7 @@ namespace RockPaperScissors
                 {
                     case "1":
                         string[] predefinedMoves = MoveSelector.SelectPredefinedMoveSet();
-                        if (predefinedMoves.Length > 0) // If a valid set is returned
+                        if (predefinedMoves.Length > 0)
                             PlayGame(predefinedMoves);
                         break;
                     case "2":
@@ -63,7 +61,7 @@ namespace RockPaperScissors
                         ExitGame();
                         break;
                     case "?":
-                        HelpDisplay.DisplayHelp(null); // Display help with sample moves
+                        HelpDisplay.DisplayHelp(null);
                         break;
                     default:
                         Console.WriteLine("Invalid option! Please select a valid option.");
@@ -72,31 +70,27 @@ namespace RockPaperScissors
             }
         }
 
-        // Play the game with the selected moves
         private static void PlayGame(string[] moves)
         {
             while (true)
             {
                 Console.Clear();
 
-                // Generate computer move and HMAC
                 Random random = new Random();
                 int computerMoveIndex = random.Next(moves.Length);
                 string computerMove = moves[computerMoveIndex];
 
-                // Generate random key and HMAC
                 byte[] secretKey = HmacGenerator.GenerateRandomKey();
                 string hmac = HmacGenerator.GenerateHmac(secretKey, computerMove);
 
-                // Display the HMAC to the user
                 Console.WriteLine($"HMAC: {hmac}");
-                
-                Console.WriteLine("Choose your move by typing a number or move name:");
+
+                Console.WriteLine("Choose your move by typing index number or move name:");
                 for (int i = 0; i < moves.Length; i++)
                 {
                     Console.WriteLine($"{i + 1}: {moves[i]}");
                 }
-                Console.WriteLine("0: Exit to main menu");
+                Console.WriteLine("0: Exit");
                 Console.WriteLine("?: Help");
 
                 Console.Write("\nYour choice: ");
@@ -104,12 +98,12 @@ namespace RockPaperScissors
 
                 if (userInput == "0" || userInput == "exit")
                 {
-                    return; // Return to main menu by exiting this function
+                    return;
                 }
                 else if (userInput == "?" || userInput == "help")
                 {
-                    HelpDisplay.DisplayHelp(moves); // Call help if needed
-                    continue; // Continue the game loop
+                    HelpDisplay.DisplayHelp(moves);
+                    continue;
                 }
 
                 int playerMoveIndex = MoveSelector.GetMoveIndex(userInput, moves);
@@ -137,20 +131,18 @@ namespace RockPaperScissors
                     Console.WriteLine("You lose!");
                 }
 
-                // Show the HMAC key after the result
                 Console.WriteLine($"\nHMAC key: {BitConverter.ToString(secretKey).Replace("-", "")}");
 
-                Console.WriteLine("\nPress Enter to return to the main menu...");
+                Console.WriteLine("\nPress Enter to return...");
                 Console.ReadLine();
-                return; // Return to the main menu after playing a game
+                return;
             }
         }
 
-        // Function to exit the game
         private static void ExitGame()
         {
             Console.WriteLine("Exiting the game. Goodbye!");
-            continuePlaying = false; // This will stop the main game loop
+            continuePlaying = false;
         }
     }
 }

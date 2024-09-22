@@ -6,7 +6,6 @@ namespace RockPaperScissors
         public static class HelpDisplay
     {
         
-        // Display help based on the selected moves
         public static void DisplayHelp(string[] moves)
         {
             Console.Clear();
@@ -17,7 +16,6 @@ namespace RockPaperScissors
             StringBuilder helpTable = new StringBuilder();
             int numMoves = moves.Length;
 
-            // Generate table header
             helpTable.Append("|  User \\ PC |");
             for (int i = 0; i < numMoves; i++)
             {
@@ -25,7 +23,6 @@ namespace RockPaperScissors
             }
             helpTable.AppendLine();
 
-            // Generate table rows
             for (int i = 0; i < numMoves; i++)
             {
                 helpTable.Append($"| {moves[i],-11}|");

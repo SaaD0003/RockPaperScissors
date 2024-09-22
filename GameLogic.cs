@@ -7,7 +7,6 @@ namespace RockPaperScissors
     {
         public static bool IsPlayerWinner(string playerMove, string computerMove)
         {
-            // Define winning moves
             Dictionary<string, List<string>> winningMoves = new Dictionary<string, List<string>>()
             {
                 { "Rock", new List<string> { "Scissors", "Lizard", "Fire", "Thunder", "Ice" } },
